@@ -1,0 +1,17 @@
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/app
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/app.deps.json
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/app.runtimeconfig.json
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/app.dll
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/app.pdb
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.csproj.AssemblyReference.cache
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.GeneratedMSBuildEditorConfig.editorconfig
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.AssemblyInfoInputs.cache
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.AssemblyInfo.cs
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.csproj.CoreCompileInputs.cache
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.dll
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/refint/app.dll
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.pdb
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.genruntimeconfig.cache
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/ref/app.dll
+/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/Newtonsoft.Json.dll
+/home/playpower/Desktop/PPL/C#/app/obj/Debug/net7.0/app.csproj.CopyComplete
