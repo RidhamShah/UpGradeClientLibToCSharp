@@ -1,6 +1,0 @@
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/app
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/app.dll
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/app.deps.json
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/app.runtimeconfig.json
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/app.pdb
-/home/playpower/Desktop/PPL/C#/app/bin/Debug/net7.0/publish/Newtonsoft.Json.dll
