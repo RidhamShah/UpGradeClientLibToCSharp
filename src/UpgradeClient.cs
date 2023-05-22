@@ -10,18 +10,18 @@ namespace ClientLib
   {
     // Endpoints URLs
     private Dictionary<string, string> api = new Dictionary<string, string> {
-    { "init","" },
-    { "getAllExperimentConditions", "" },
-    { "markExperimentPoint", "" },
-    { "setGroupMembership", "" },
-    { "setWorkingGroup", "" },
-    { "failedExperimentPoint", "" },
-    { "getAllFeatureFlag", "" },
-    { "log", "" },
-    { "logCaliper", "" },
-    { "altUserIds", "" },
-    { "addMetrics", "" }
-  };
+      { "init","" },
+      { "getAllExperimentConditions", "" },
+      { "markExperimentPoint", "" },
+      { "setGroupMembership", "" },
+      { "setWorkingGroup", "" },
+      { "failedExperimentPoint", "" },
+      { "getAllFeatureFlag", "" },
+      { "log", "" },
+      { "logCaliper", "" },
+      { "altUserIds", "" },
+      { "addMetrics", "" }
+    };
 
     private string userId;
     private string hostUrl;
@@ -29,10 +29,10 @@ namespace ClientLib
     private string token;
     private string clientSessionId;
 
-    private Dictionary<string, List<string>> group = null;
+    private Dictionary<string, string[]> group = null;
     private Dictionary<string, string> workingGroup = null;
     // private List<IExperimentAssignmentv4> experimentConditionData = null;
-    private IExperimentAssignmentv4[] experimentConditionData = null;
+    private ExperimentAssignmentv4[] experimentConditionData = null;
     private List<IFeatureFlag> featureFlags = null;
 
     public UpgradeClient(string userId, string hostUrl, string context, string token = null, string clientSessionId = null)
@@ -71,45 +71,62 @@ namespace ClientLib
       }
     }
 
-    public async Task<IUser> Init(Dictionary<string, List<string>> group = null, Dictionary<string, string> workingGroup = null)
+    public async Task<User> Init(Dictionary<string, List<string>> group = null, Dictionary<string, string> workingGroup = null)
     {
       ValidateClient();
-      Console.WriteLine("Init function called in");
       
-      IUser data = await InitClass.Init(this.api["init"], this.userId, this.token, this.clientSessionId, group, workingGroup);
-      return data;
+      return await InitClass.Init(this.api["init"], this.userId, this.token, this.clientSessionId, group, workingGroup);
     }
 
-    // public async Task < Interfaces.IUser > SetGroupMembership(Dictionary < string, List < string >> group) {
-    //   ValidateClient();
-    //   Interfaces.IUser response = await SetGroupMembership(this.api.SetGroupMembership, this.userId, this.token, this.clientSessionId, group);
-    //   if (response.id != null) {
-    //     this.group = group;
-    //     response = new Interfaces.IUser {
-    //       id = response.id,
-    //         workingGroup = this.workingGroup
-    //     };
-    //   }
-    //   return response;
-    // }
-
-    // public async Task < IUser > SetWorkingGroup(Dictionary < string, string > workingGroup) {
-    //   ValidateClient();
-    //   IUser response = await SetWorkingGroup(this.api.SetWorkingGroup, this.userId, this.token, this.clientSessionId, workingGroup);
-    //   if (response.Id != null) {
-    //     this.workingGroup = workingGroup;
-    //     response.Group = this.group;
-    //   }
-    //   return response;
-    // }
-
-    public async Task < IExperimentAssignmentv4[] > GetAllExperimentConditions() {
+    public async Task < User > SetGroupMembership(Dictionary < string, string[]> group) {
       ValidateClient();
-      IExperimentAssignmentv4[] response = await GetAllExperimentConditionClass.GetAllExperimentConditions(
-        this.api["getAllExperimentConditions"],
+      Group response = await GroupClass.SetGroupMembership(
+        this.api["setGroupMembership"],
         this.userId,
         this.token,
         this.clientSessionId,
+        group
+      );
+      if (response.id != null) {
+        this.group = group;
+        var responseToSend = new User {
+          id = response.id,
+          group = response.group,
+          workingGroup = this.workingGroup
+        };
+        return responseToSend;
+      }
+      return null;
+    }
+
+    public async Task < User > SetWorkingGroup(Dictionary < string, string > workingGroup) {
+      ValidateClient();
+      WorkingGroup response = await WorkingGroupClass.SetWorkingGroup(
+        this.api["setWorkingGroup"],
+        this.userId,
+        this.token,
+        this.clientSessionId,
+        workingGroup
+      );
+      if (response.id != null) {
+        this.workingGroup = workingGroup;
+        var responseToSend = new User {
+          id = response.id,
+          group = this.group,
+          workingGroup = response.workingGroup,
+        };
+        return responseToSend;
+      }
+      return null;
+    }
+
+    public async Task < ExperimentAssignmentv4[] > GetAllExperimentConditions() {
+      ValidateClient();
+      ExperimentAssignmentv4[] response = await GetAllExperimentConditionClass.GetAllExperimentConditions(
+        this.api["getAllExperimentConditions"],
+        this.userId,
+        this.token,
+        this.clientSessionId, 
         this.context
       );
       if (response != null) {
@@ -118,21 +135,39 @@ namespace ClientLib
       return response;
     }
 
-    // public async Task < Assignment > GetDecisionPointAssignment(string site, string target) {
-    //   ValidateClient();
-    //   if (this.experimentConditionData == null) {
-    //     await this.GetAllExperimentConditions();
-    //   }
-    //   return GetExperimentCondition(this.experimentConditionData, site, target);
-    // }
+    public async Task < Assignment > GetDecisionPointAssignment(string site, string target) {
+      ValidateClient();
+      if (this.experimentConditionData == null) {
+        await this.GetAllExperimentConditions();
+      }
+      return GetExperimentConditionClass.GetExperimentCondition(this.experimentConditionData, site, target);
+    }
 
-    // public async Task < IMarkExperimentPoint > MarkExperimentPoint(string site, string target, string condition = null, MARKED_DECISION_POINT_STATUS status, string clientError = null) {
-    //   ValidateClient();
-    //   if (this.experimentConditionData == null) {
-    //     await this.GetAllExperimentConditions();
-    //   }
-    //   return await MarkExperimentPoint(this.api.MarkExperimentPoint, this.userId, this.token, this.clientSessionId, site, target, condition, status, this.experimentConditionData, clientError);
-    // }
+    public async Task < MarkExperimentPoint > MarkExperimentPoint(
+      string site,
+      string target,
+      string condition,
+      MARKED_DECISION_POINT_STATUS status,
+      string clientError = null
+    ) 
+    {
+      ValidateClient();
+      if (this.experimentConditionData == null) {
+        await this.GetAllExperimentConditions();
+      }
+      return await MarkExperimentPointClass.MarkExperimentPoint(
+        this.api["markExperimentPoint"],
+        this.userId,
+        this.token,
+        this.clientSessionId,
+        site,
+        target,
+        condition,
+        status,
+        this.experimentConditionData,
+        clientError
+      );
+    }
 
     // public async Task < IFeatureFlag[] > GetAllFeatureFlags() {
     //   ValidateClient();
@@ -148,10 +183,10 @@ namespace ClientLib
     //   return GetFeatureFlag(this.featureFlags, key);
     // }
 
-    // public async Task < ILog[] > Log(List < ILogInput > value, bool sendAsAnalytics = false) {
-    //   ValidateClient();
-    //   return await Log(this.api.Log, this.userId, this.token, this.clientSessionId, value, sendAsAnalytics);
-    // }
+    public async Task < Log[] > Log(LogInput[] value, bool sendAsAnalytics = false) {
+      ValidateClient();
+      return await LogClass.Log(this.api["log"], this.userId, this.token, this.clientSessionId, value, sendAsAnalytics);
+    }
 
     // public async Task < ILog[] > LogCaliper(CaliperEnvelope value, bool sendAsAnalytics = false) {
     //   ValidateClient();
@@ -163,15 +198,19 @@ namespace ClientLib
     //   return await SetAltUserIds(this.api.AltUserIds, this.userId, this.token, this.clientSessionId, altUserIds);
     // }
 
-    // public async Task < IMetric[] > AddMetrics(List < ISingleMetric > metrics) {
+    // public async Task < IMetric[] > AddMetrics(ISingleMetric[] metrics) {
     //   ValidateClient();
-    //   return await AddMetrics(this.api.AddMetrics, this.token, this.clientSessionId, metrics);
+    //   return await MetricClass.AddMetrics(this.api["addMetrics"], this.token, this.clientSessionId, metrics);
     // }
 
-    // public async Task < IMetric[] > AddMetrics(List < IGroupMetric > metrics) {
+    // public async Task < IMetric[] > AddMetrics(IGroupMetric[] metrics) {
     //   ValidateClient();
-    //   return await AddMetrics(this.api.AddMetrics, this.token, this.clientSessionId, metrics);
+    //   return await MetricClass.AddMetrics(this.api["addMetrics"], this.token, this.clientSessionId, metrics);
     // }
 
+    public async Task < Metric[] > AddMetrics(AbstractMetric[] metrics) {
+      ValidateClient();
+      return await MetricClass.AddMetrics(this.api["addMetrics"], this.token, this.clientSessionId, metrics);
+    }
   }
 }

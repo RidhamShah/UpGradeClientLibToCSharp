@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Newtonsoft;
 using Enums;
 using Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public static class FetchDataServiceClass
 {
-  public static async Task<IResponse> FetchData(
+  public static async Task<Response> FetchData(
       string url,
       string token,
       string clientSessionId,
@@ -23,12 +25,11 @@ public static class FetchDataServiceClass
     try
     {
       Dictionary<string, string> headers = new Dictionary<string, string>()
-            {
-                {"Content-Type", "application/json"},
-                {"Session-Id", clientSessionId ?? Guid.NewGuid().ToString()},
-                {"CurrentRetry", retries.ToString()},
-                {"URL", url}
-            };
+      {
+          {"Session-Id", clientSessionId ?? Guid.NewGuid().ToString()},
+          {"CurrentRetry", retries.ToString()},
+          {"URL", url}
+      };
       if (!string.IsNullOrEmpty(token))
       {
         headers.Add("Authorization", $"Bearer {token}");
@@ -53,7 +54,7 @@ public static class FetchDataServiceClass
 
       if (requestType == REQUEST_TYPES.POST || requestType == REQUEST_TYPES.PATCH)
       {
-        string jsonBody = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+        string jsonBody = JsonConvert.SerializeObject(data);
         request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
       }
 
@@ -116,7 +117,7 @@ public static class FetchDataServiceClass
     }
   }
 
-  public static async Task<IResponse> FetchDataService(
+  public static async Task<Response> FetchDataService(
       string url,
       string token,
       string clientSessionId,
@@ -138,61 +139,5 @@ public static class FetchDataServiceClass
   private static async Task Wait(int ms)
   {
     await Task.Delay(ms);
-  }
-
-  public static async Task<IResponse> TestResponse(
-    string url
-  )
-  {
-    // ================================================
-    // TESTING RESPONSE DATA
-
-    if (url.EndsWith("init"))
-    {
-      return new Response()
-      {
-        status = true,
-        data = new User
-        {
-          Id = "use503",
-        }
-      };
-    }
-    else if (url.EndsWith("assign"))
-    {
-      return new Response()
-      {
-        status = true,
-        data = new List<object>
-        {
-          new
-              {
-                  target = "",
-                  site = "add-point1",
-                  experimentType = "Simple",
-                  assignedCondition = new
-                  {
-                      id = "86326641-62d4-40b2-9811-ae66e55ea064",
-                      conditionCode = "add-con2",
-                      payload = (object)null,
-                      experimentId = "3661678f-6701-49a7-973a-c1c27d5fe28b"
-                  }
-              }
-          }
-
-      };
-    }
-    else
-    {
-      {
-        return new Response()
-        {
-          status = false,
-          data = null,
-        };
-      }
-    }
-    // ==================================================
-    // TESTTING COMPLETE
   }
 }

@@ -29,4 +29,17 @@ namespace Enums
     POST,
     PATCH
   }
+
+  public enum MARKED_DECISION_POINT_STATUS
+  {
+    CONDITION_APPLIED,
+    CONDITION_FAILED_TO_APPLY,
+    NO_CONDITION_ASSIGNED
+  }
+
+  public enum EXPERIMENT_TYPE
+  {
+    SIMPLE,
+    FACTORIAL
+  }
 }

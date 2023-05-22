@@ -2,29 +2,38 @@ using Enums;
 
 namespace Interfaces
 {
-  public interface IExperimentAssignmentv4
+  public class ExperimentAssignmentv4
   {
-    string Site { get; set; }
-    string Target { get; set; }
-    AssignedCondition AssignedCondition { get; set; }
-    IDictionary<string, AssignedFactor> AssignedFactor { get; set; }
+    public string site { get; set; }
+    public string target { get; set; }
+    public AssignedCondition assignedCondition { get; set; }
+    public Dictionary<string, AssignedFactor> assignedFactor { get; set; }
+  }
+
+  public class MarkExperimentPoint
+  {
+    string id { get; set; }
+    string site { get; set; }
+    string target { get; set; }
+    string userId { get; set; }
+    string experimentId { get; set; }
   }
 
   public class AssignedCondition
   {
-    public string ConditionCode { get; set; }
-    public IPayload Payload { get; set; }
-    public string ExperimentId { get; set; }
-    public string Id { get; set; }
+    public string conditionCode { get; set; }
+    public Payload payload { get; set; }
+    public string experimentId { get; set; }
+    public string id { get; set; }
   }
 
   public class AssignedFactor
   {
-    public string Level { get; set; }
-    public IPayload Payload { get; set; }
+    public string level { get; set; }
+    public Payload payload { get; set; }
   }
 
-  public interface IFlagVariation
+  public class IFlagVariation
   {
     string Id { get; set; }
     string Value { get; set; }
@@ -33,7 +42,7 @@ namespace Interfaces
     bool[] DefaultVariation { get; set; }
   }
 
-  public interface IFeatureFlag
+  public class IFeatureFlag
   {
     string Id { get; set; }
     string Name { get; set; }
@@ -44,62 +53,105 @@ namespace Interfaces
     IList<IFlagVariation> Variations { get; set; }
   }
 
-  public interface ILogMetrics
+  public class LogMetrics
   {
-    IDictionary<string, string> Attributes { get; set; }
-    IList<ILogGroupMetrics> GroupedMetrics { get; set; }
+    public Dictionary<string, string> attributes { get; set; }
+    public IList<ILogGroupMetrics> groupedMetrics { get; set; }
   }
 
   public interface ILogGroupMetrics
   {
-    string GroupClass { get; set; }
-    string GroupKey { get; set; }
-    string GroupUniquifier { get; set; }
-    IDictionary<string, string> Attributes { get; set; }
+    string groupClass { get; set; }
+    string groupKey { get; set; }
+    string groupUniquifier { get; set; }
+    IDictionary<string, string> attributes { get; set; }
   }
 
-  public interface ILogInput
+  public class LogInput
   {
-    string Timestamp { get; set; }
-    ILogMetrics Metrics { get; set; }
+    public string timestamp { get; set; }
+    public LogMetrics metrics { get; set; }
   }
 
-  public interface IGroupMetric
+  public class GroupMetric : AbstractMetric
   {
-    string GroupClass { get; set; }
-    IList<string> AllowedKeys { get; set; }
-    IList<IMetric> Attributes { get; set; }
+    public string groupClass { get; set; }
+    public string[] allowedKeys { get; set; }
+    public SingleMetric[] attributes { get; set; }
   }
 
-  public interface ISingleMetric : IMetric
+  public class SingleMetric : AbstractMetric
   {
-    string Metric { get; set; }
-    IMetricMetaData Datatype { get; set; }
-    IList<object> AllowedValues { get; set; }
+    public string metric { get; set; }
+    public string datatype { get; set; }
+    public object[] allowedValues { get; set; }
   }
 
-  public interface IMetric
+  public class Payload
   {
+    public PAYLOAD_TYPE type { get; set; }
+    public string value { get; set; }
   }
 
-  public interface IPayload
+  public class User
   {
-    PAYLOAD_TYPE Type { get; set; }
-    string Value { get; set; }
+    public string id { get; set; }
+    public Dictionary<string, string[]>? group { get; set; }
+    public Dictionary<string, string>? workingGroup { get; set; }
   }
 
-  public interface IUser
+  public class Group
   {
-    string Id { get; set; }
-    Dictionary<string, List<string>> Group { get; set; }
-    Dictionary<string, string> WorkingGroup { get; set; }
+    public string id { get; set; }
+    public Dictionary<string, string[]>? group { get; set; }
   }
 
-
-  public interface IResponse
+  public class WorkingGroup
   {
-    bool status { get; set; }
+    public string id { get; set; }
+    public Dictionary<string, string>? workingGroup { get; set; }
+  }
+
+  public class Response
+  {
+    public bool status { get; set; }
+    public object data { get; set; }
+    public object message { get; set; }
+  }
+
+  public class MarkData
+  {
+    public string userId { get; set; }
+    public MARKED_DECISION_POINT_STATUS status { get; set; }
+    public ExperimentAssignmentv4 data { get; set; }
+    public string clientError { get; set; }
+  }
+
+  public class Log
+  {
+    string id { get; set; }
     object data { get; set; }
-    object message { get; set; }
+    List<Metric> metrics { get; set; }
+    User user { get; set; }
+    string timeStamp { get; set; }
+    string uniquifier { get; set; }
+  }
+
+  public class Metric
+  {
+    string key { get; set; }
+    string type { get; set; }
+    string[] allowedData { get; set; }
+  }
+
+  public class MetricMetaData
+  {
+    public const string CATEGORICAL = "categorical";
+    public const string CONTINUOUS = "continuous";
+  }
+
+  public abstract class AbstractMetric
+  {
+
   }
 }

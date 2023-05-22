@@ -6,10 +6,9 @@ using Newtonsoft.Json;
 
 public static class InitClass
 {
-  public static async Task<IUser> Init(string url, string userId, string token, string clientSessionId,
+  public static async Task<User> Init(string url, string userId, string token, string clientSessionId,
       Dictionary<string, List<string>> group = null, Dictionary<string, string> workingGroup = null)
   {
-    Console.WriteLine("Inside init function");
     var data = new Dictionary<string, object>
         {
             { "id", userId }
@@ -29,7 +28,8 @@ public static class InitClass
 
     if (response.status)
     {
-      return response.data as IUser;
+      var responseData = JsonConvert.DeserializeObject<User>(response.data.ToString());
+      return responseData as User;
     }
     else
     {
